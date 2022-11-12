@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js" integrity="sha512-P/Je1zlTfRugG4aRZRx9hYRVph2CkbpchkgP6ub1gNF/VNHDUNq0/WOY0CSLMmwEXxrQ7HohFmMenWGpx8ZzvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js" integrity="sha512-hAm8hj9/2EIonvS+sf0G3anaY8zYHv6q7ktNlLTg8wLwFvhUavnDdH0gif8SA3U1kN0lyKBWbf1wD4+5BfaMMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <h1 >lord</h1>
+    <a href="/dataB.html"> Fetch data Page  </a>
+
+    <br><hr>
+    <button class='ftx' > Send Location </button>
+
+    <button class = 'weather' > Get weather </button>
+
+    <button class = 'air' > Air Quality Measures </button>
+
+
+    <hr>
+
+    <div class="div">
+
+    </div>
+
+    <div class="th">
+
+
+    </div>
+
+   
+   
+
+    <script>
+
+
+
+function setup(){
+
+    noCanvas()
+
+
+  //  const vid = createCapture(VIDEO) 
+
+   // vid.size(540,740)
+
+  //  vid.loadPixels()
+
+   // let asci = vid.canvas.toDataURL()
+
+
+
+ 
+            if ('geolocation' in navigator){
+            console.log('Geolocation is available');
+           
+            navigator.geolocation.getCurrentPosition(async(position)=>{
+
+            let div = document.querySelector('.div')
+          
+         
+
+               const lat = await position.coords.latitude
+               const log = await position.coords.longitude
+
+               div.innerHTML += `<h2>Latitude GPS===><br>${lat}&#176;<hr></h2>
+                                                            
+              
+                                <h2>Longitude GPS===><br>${log}&#176;</h2>
+                                enter city : <input type="text" class="city" name="fname">
+                                <hr> `
+
+                                 const locationData = document.querySelector('.ftx') 
+                                 const city = document.querySelector('.city')
+                                 
+
+                               locationData.addEventListener('click',async()=>{
+
+
+                                const cityX = city.value
+                                
+                                const data = {lat , log , cityX }
+
+                                const options = {
+                                                                method: "POST",
+                                                                body: JSON.stringify(data),
+
+                                                                headers: {
+                                                                'Content-Type': 'application/json'
+                                                                }
+                                                                }
+
+
+                            
+                                const location = await fetch('/gps' , options)
+
+            
+                                console.log(await location.json());
+
+                                
+                               })
+
+
+
+                             
+
+
+
+
+
+
+
+                            document.querySelector('.weather') .addEventListener('click' , async ()=>{ 
+
+                                let weathJS   , airResult , air
+
+                                  try{
+
+                                        let weath = await fetch(`/wea/${lat}/${log}`)
+
+                                         weathJS = await weath.json()
+
+                                     
+
+                                        air = weathJS.Air_quality.results[0].measurements[0]
+
+                                     
+
+                                         airResult = weathJS.Air_quality.results[0]
+                                        
+                                            let description = weathJS.weather.weather[0].description
+                                            let wind_speed = weathJS.weather.wind.speed
+                                            let cityAir = airResult.city
+                                            let location = airResult.location
+                                            let lastUpdate =air.lastUpdated
+                                            let substance =air.parameter
+                                            let value =air.value
+                                            let unit =air.unit
+
+
+                                        document.querySelector('.th').innerHTML = `<h1 style="color:blue;" > Location  based on GPS===> <hr> ${weathJS.weather.name} , ${weathJS.weather.sys.country}<h1>
+                                        <br><hr>
+                                         <h2 style="color:red;" > Weather Today=> ${weathJS.weather.weather[0].description}<h2>
+                                        <h3> Wind Speed => ${weathJS.weather.wind.speed}<h3>`
+
+                                          
+
+                                        document.querySelector('.air').innerHTML = ` <hr> <h4> ${airResult.city , airResult.location} </h4> <br>
+                                          <h5>Last Time Data Update: ${mesure.lastUpdated}</h5> <br> <p> This is the data we have of ${mesure.parameter} ,
+                                            as the data says this substance measures at ${mesure.value} ${mesure.unit} </p> `
+                                      
+                                       
+                                                        } catch(err){
+
+                                                            console.log(air);
+
+                                                            air = {value: -1}                    
+                                                            
+                                                            
+                                                                }
+
+
+
+                                const data = {weathJS}
+
+                                const options = {
+                                                                method: "POST",
+                                                                body: JSON.stringify(data),
+
+                                                                headers: {
+                                                                'Content-Type': 'application/json'
+                                                                }
+                                                                }
+
+
+                            
+                                const locationPppP = await fetch('/gps' , options)
+
+            
+                                await locationPppP.json();
+
+
+                                                           
+
+
+                              
+                               
+                        })
+
+
+
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                         
+                                    
+
+                                  
+              
+
+            })
+
+ 
+
+
+
+
+
+
+
+
+        }else {
+            console.log('No navigation found');
+        }
+        
+
+       
+
+
+
+
+}
+
+  
+
+
+
+
+   
+       
+    </script>
+</body>
+</html>
+

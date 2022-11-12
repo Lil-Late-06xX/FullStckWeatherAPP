@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+    <style>
+        #map{height: 400px;}
+    </style>
+
+</head>
+<body class="body1" >
+    <h1>Data Base</h1> 
+   
+    <a href="/index.html"> Submit Data Page  </a>
+ <br><hr>
+<button class="btnX" > Fetch Data</button>
+
+<div id="map"> </div>
+
+
+
+    <script>
+        
+
+
+            let map = L.map('map').setView([0,0] , 1)
+
+            L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=4c2nCS6vI2olkFEJKWnn' , {
+
+                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+            }).addTo(map)
+
+
+            
+
+            
+            let z = document.querySelector('.btnX')
+
+            z.addEventListener('click' , ()=>{
+                ytb()
+            })
+            
+
+                const ytb = async ()=>{
+                    const dt = await fetch('/data')
+                    const JSdt = await dt.json()
+
+                   
+                  
+
+
+
+                    JSdt.forEach(item=>{
+
+                        
+
+                        let time = item.timestamp
+
+                        let time1 = new Date(time)
+
+                      
+
+                        let OOP = item.weathJS
+
+                        let weather = OOP.weather
+
+                        let air = OOP.Air_quality
+                    
+                  
+                        
+                     let lat = weather.coord.lat
+                     let log = weather.coord.lon
+                     let des = weather.weather[0].description
+
+                    let res = air.results[0]
+                     let mes = res.measurements
+
+
+                    let list = document.createElement('ul')
+                   
+                    
+              
+                     list.innerHTML += ` <div> <li style="background-color: powderblue;" >
+                            
+                            Latitude: ${lat}
+                          
+                            </li  >
+                            <li style="background-color: powderblue;" >
+                            
+                            Longitude: ${log}
+                          
+                            </li>
+                            <li style="background-color: powderblue;" >
+                            
+                            City: ${weather.name}
+                          
+                            </li>
+
+                            <li style="background-color: powderblue;" >
+                            
+                            Description: ${des}
+                          
+                            </li> <li style="background-color: powderblue;" >
+                            
+                           wind-speed : ${weather.wind.speed}  </div>   <div>
+                          
+                        </li> 
+                         <span style="background-color: pink;" > Air Quality for ${mes.parameter} in ${mes.unit} </span> 
+                        
+                        <li style="background-color: powderblue;" >
+                        
+                        Molecule-watched : ${mes.parameter}
+                        
+                        </li> <li style="background-color: powderblue;" >
+                        
+                        Last-up-date: ${mes.lastUpdated}
+                        
+                        </li>  <li style="background-color: powderblue;" >
+                        
+                        Unit: ${mes.unit}
+                        
+                        </li> <li style="background-color: powderblue;" >
+                        
+                        Value: ${mes.value}
+                        </li>
+                        
+                        <li style="background-color: powderblue;" >
+                        
+                        Time of action: ${time1.toLocaleString()}
+                        </li>
+                        
+                        <hr> Next City: <hr>        </div>   `
+
+                           
+
+                   
+
+
+                            
+                            
+
+
+
+                            JSdt.forEach(item=>{
+
+                           const mk = L.marker([ lat,log]).addTo(map)
+                         
+                        
+                            
+
+                            
+
+                           
+
+ 
+
+                            mk.bindPopup('air')
+                            })
+
+                    
+
+                     
+                        
+
+                        document.body.append(list)
+
+
+
+                    })
+
+                    
+
+                    
+                }
+
+      
+</script>
+
+</body>
+</html>
